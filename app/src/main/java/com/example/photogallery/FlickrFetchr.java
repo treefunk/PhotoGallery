@@ -3,11 +3,16 @@ package com.example.photogallery;
 import android.net.Uri;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 //7ae871b7f815a6bcecbe9b60a512ca5e
 
 
@@ -66,4 +71,15 @@ public class FlickrFetchr {
         }
 
     }
+
+    private void parseItems(List<GalleryItem> items, JSONObject jsonBody) throws IOException, JSONException {
+        JSONObject photosJsonObject = jsonBody.getJSONObject("photos");
+        JSONArray photoJsonArray = photosJsonObject.getJSONArray("photo");
+
+        for(int i = 0; i < photoJsonArray.length(); i++){
+
+        }
+    }
+
+
 }
