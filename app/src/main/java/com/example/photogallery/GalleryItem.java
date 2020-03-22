@@ -1,15 +1,23 @@
 package com.example.photogallery;
 
+import com.google.gson.annotations.SerializedName;
+
 public class GalleryItem {
 
+    @SerializedName("id")
     private String mId;
+
+    @SerializedName("title")
     private String mCaption;
+
+    @SerializedName("url_s")
     private String mUrl;
 
     @Override
     public String toString(){
         return mCaption;
     }
+
 
     public String getId() {
         return mId;
