@@ -79,6 +79,19 @@ public class ThumbnailDownloader<T> extends HandlerThread {
             final Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes,0,bitmapBytes.length);
             Log.i(TAG,"Bitmap created");
 
+            mResponseHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if(mRequestMap.get(target) != url || mHasQuit){
+                        return;
+                    }
+
+                    mRequestMap.remove(target);
+
+                    mThumbnailDownloadListener.onThumbnailDownloaded(target, bitmap);
+                }
+            });
+
         }catch (IOException io){
             Log.e(TAG,"input output exception ", io);
         }
