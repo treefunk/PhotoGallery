@@ -1,8 +1,11 @@
 package com.example.photogallery.fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +38,8 @@ public class PhotoGalleryFragment extends Fragment {
     private GridLayoutManager mGridLayoutManager;
     private PhotoAdapter photoAdapter;
     private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
+
+
 
     @Nullable
     @Override
@@ -154,7 +158,18 @@ public class PhotoGalleryFragment extends Fragment {
         StrictMode.setThreadPolicy(policy);
         setRetainInstance(true);
         new FetchItemsTask().execute(String.valueOf(currentPage));
-        mThumbnailDownloader = new ThumbnailDownloader<>();
+
+        Handler responseHandler = new Handler();
+        mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
+
+        mThumbnailDownloader.setThumbnailDownloadListener(new ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder>() {
+            @Override
+            public void onThumbnailDownloaded(PhotoHolder photoHolder, Bitmap thumbnail) {
+                Drawable drawable = new BitmapDrawable(getResources(),thumbnail);
+                photoHolder.bindDrawable(drawable);
+            }
+        });
+
         mThumbnailDownloader.start();
         mThumbnailDownloader.getLooper();
         Log.i(TAG,"Background thread started");
@@ -177,8 +192,8 @@ public class PhotoGalleryFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         mThumbnailDownloader.quit();
         Log.i(TAG,"background thread destroyed");
+        super.onDestroy();
     }
 }
